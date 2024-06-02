@@ -13,7 +13,7 @@ npm install delay-actions
 ## Usage
 
 ```javascript
-const { Delay } = require('delay-actions');
+import { Delay } from 'delay-actions';
 
 // Create a new Delay instance
 const delay = new Delay();
