@@ -1,4 +1,4 @@
-# Delay actions
+# [Delay actions](https://www.npmjs.com/package/delay-actions)
 
 A flexible delay utility for Node.js.
 
