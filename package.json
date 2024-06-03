@@ -1,11 +1,18 @@
 {
   "name": "delay-actions",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "main": "dist/delay.js",
   "types": "dist/delay.d.ts",
   "author": "Evan Perreau",
   "license": "MIT",
   "description": "A simple and flexible timer utility for TypeScript.",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EvanPerreau/DelayActions.git"
+  },
   "scripts": {
     "build": "tsc",
     "test": "jest"

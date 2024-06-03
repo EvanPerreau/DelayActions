@@ -30,11 +30,13 @@ export class Delay {
 
     /**
      * Starts a delay for the specified duration.
-     * @param ms The duration of the delay in milliseconds.
+     * @param duration The duration of the delay in milliseconds or a string (e.g., "1m", "2s", "1h").
      * @param action The action to execute when the delay is complete.
      * @returns A promise that resolves when the delay is complete.
      */
-    async start(ms: number, action: () => void): Promise<void> {
+    async start(duration: number | string, action: () => void): Promise<void> {
+        const ms = typeof duration === 'string' ? this.durationToMilliseconds(duration) : duration;
+
         return new Promise((resolve) => {
             this._remainingSinceLastStart = ms;
             this._startTime = Date.now();
@@ -83,6 +85,33 @@ export class Delay {
             this._startTime = null;
             this._remainingSinceLastStart = null;
             this._isPaused = false;
+        }
+    }
+
+    // --------------------
+    // Private methods
+    // --------------------
+
+    /**
+     * Converts a duration string to milliseconds.
+     * @param duration The duration string (e.g., "1m", "2s", "1h").
+     * @returns The duration in milliseconds.
+     */
+    private durationToMilliseconds(duration: string): number {
+        const units = duration.slice(-1);
+        const value = Number(duration.slice(0, -1));
+
+        switch (units) {
+            case 's':
+                return value * 1000;
+            case 'm':
+                return value * 1000 * 60;
+            case 'h':
+                return value * 1000 * 60 * 60;
+            case 'd':
+                return value * 1000 * 60 * 60 * 24;
+            default:
+                throw new Error(`Unknown time unit: ${units}`);
         }
     }
 }
