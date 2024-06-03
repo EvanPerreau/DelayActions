@@ -20,6 +20,14 @@ describe('Delay', () => {
         expect(elapsedTime).toBeGreaterThanOrEqual(ms);
     });
 
+    it('should start and resolve after specified time (with time in string)', async () => {
+        const startTime = Date.now();
+        await delay.start('3s', () => {});
+        const endTime = Date.now();
+        const elapsedTime = endTime - startTime;
+        expect(elapsedTime).toBeGreaterThanOrEqual(3000);
+    });
+
     it('should pause and resume correctly', async () => {
         const ms = 2000; // 2 secondes
         await delay.start(ms, () => {});
