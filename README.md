@@ -1,4 +1,4 @@
-# Delay actions
+# [Delay actions](https://www.npmjs.com/package/delay-actions)
 
 A flexible delay utility for Node.js.
 
@@ -13,7 +13,7 @@ npm install delay-actions
 ## Usage
 
 ```javascript
-const { Delay } = require('delay-actions');
+import { Delay } from 'delay-actions';
 
 // Create a new Delay instance
 const delay = new Delay();
