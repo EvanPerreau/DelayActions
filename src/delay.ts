@@ -4,8 +4,10 @@
 export class Delay {
     private _timerId: NodeJS.Timeout | null = null;
     private _startTime: number | null = null;
+    private _restartTime: number | null = null;
     private _remainingSinceLastStart: number | null = null;
     private _isPaused: boolean = false;
+    private _action: (() => void) | null = null;
 
     /**
      * Gets the timer ID of the current delay.
@@ -29,6 +31,27 @@ export class Delay {
     }
 
     /**
+     * Gets the remaining time of the current delay. return null if the delay is not started or if the delay is completed.
+     */
+    get remaining(): number | null {
+        let result: number | null = null;
+        if (!(this._remainingSinceLastStart === null || this._startTime === null)) {
+            if (this._isPaused) {
+                result = this._remainingSinceLastStart;
+            } else if (this._restartTime !== null) {
+                result = this._remainingSinceLastStart - (Date.now() - this._restartTime);
+            } else {
+                result = Date.now() - this._startTime;
+            }
+
+        }
+        if (result !== null  && result < 0) {
+            result = null;
+        }
+        return result;
+    }
+
+    /**
      * Starts a delay for the specified duration.
      * @param duration The duration of the delay in milliseconds or a string (e.g., "1m", "2s", "1h").
      * @param action The action to execute when the delay is complete.
@@ -36,15 +59,18 @@ export class Delay {
      */
     async start(duration: number | string, action: () => void): Promise<void> {
         const ms = typeof duration === 'string' ? this.durationToMilliseconds(duration) : duration;
+        this._remainingSinceLastStart = ms;
+        this._startTime = Date.now();
+        this._action = action;
+        this._isPaused = false;
 
         return new Promise((resolve) => {
-            this._remainingSinceLastStart = ms;
-            this._startTime = Date.now();
-            this._timerId = setTimeout(() => {
-                this._isPaused = false;
-                action();
-                resolve();
-            }, this._remainingSinceLastStart);
+            if (this._remainingSinceLastStart !== null) {
+                this._timerId = setTimeout(() => {
+                    action();
+                    resolve();
+                }, this._remainingSinceLastStart);
+            }
         });
     }
 
@@ -61,15 +87,18 @@ export class Delay {
 
     /**
      * Resumes a paused delay.
-     * @returns A promise that resolves when the delay resumes.
      */
     async resume(): Promise<void> {
-        if (this._isPaused) {
+        if (this._isPaused && this._action !== null) {
+            this._restartTime = Date.now();
+            this._isPaused = false;
             return new Promise((resolve) => {
-                this._timerId = setTimeout(() => {
-                    this._isPaused = false;
-                    resolve();
-                }, this._remainingSinceLastStart!);
+                if (this._remainingSinceLastStart !== null) {
+                    this._timerId = setTimeout(() => {
+                        this._action!();
+                        resolve();
+                    }, this._remainingSinceLastStart);
+                }
             });
         }
         return Promise.resolve();
@@ -83,8 +112,10 @@ export class Delay {
             clearTimeout(this._timerId);
             this._timerId = null;
             this._startTime = null;
+            this._restartTime = null;
             this._remainingSinceLastStart = null;
             this._isPaused = false;
+            this._action = null;
         }
     }
 
