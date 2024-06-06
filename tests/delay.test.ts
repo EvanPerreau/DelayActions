@@ -1,5 +1,4 @@
 import { Delay } from '../src/delay';
-import exp = require("node:constants");
 
 describe('Delay', () => {
     let delay: Delay;
