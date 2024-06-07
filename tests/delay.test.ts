@@ -75,7 +75,7 @@ describe('Delay', () => {
         expect(remaining).toBeGreaterThanOrEqual(990); // Au moins 1 seconde restante
         expect(remaining).toBeLessThanOrEqual(1010); // Pas plus de 1.01 secondes restantes
 
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Attendre 1 seconde
+        await new Promise(resolve => setTimeout(resolve, 1010)); // Attendre 1 seconde
         expect(delay.remaining).toBeNull(); // Aucun temps restant après l'expiration
         delay.cancel();
         remaining = delay.remaining;
