@@ -11,11 +11,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 21
+          node-version: '21'
       - name: Install dependencies
-        run: npm ci
+        run: npm install
+      - name: Compile TypeScript
+        run: npx tsc
       - name: Run tests
         run: npm test
 
@@ -26,12 +28,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 21
+          node-version: '21'
           registry-url: https://registry.npmjs.org/
       - name: Install dependencies
-        run: npm ci
+        run: npm install
+      - name: Compile TypeScript
+        run: npx tsc
       - name: Publish package
         run: npm publish
         env:
